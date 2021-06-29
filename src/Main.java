@@ -1,7 +1,8 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("1.Them NV");
@@ -11,7 +12,7 @@ public class Main {
             System.out.println("5.Sap xep theo ten");
             System.out.println("6.Show");
             System.out.println("7.Exit");
-            int choose = scanner.nextInt();
+            int choose = Integer.parseInt(scanner.nextLine());
             switch (choose) {
                 case 1:
                     Manager.add();

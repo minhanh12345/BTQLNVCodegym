@@ -1,19 +1,47 @@
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Manager {
     static Scanner scanner = new Scanner(System.in);
-    static ArrayList<NhanVien> list = new ArrayList<>();
+    static ArrayList<NhanVien> list = read();
+
+    //    static {
+//        try {
+//            list = read();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//    }
+    public static void save() throws IOException {
+        FileOutputStream fileOutputStream = new FileOutputStream("nhanVien.txt");
+        ObjectOutputStream oos = new ObjectOutputStream(fileOutputStream);
+        oos.writeObject(list);
+    }
+
+    public static ArrayList<NhanVien> read() {
+        ArrayList<NhanVien> list = new ArrayList<>();
+        try {
+            FileInputStream fileInputStream = new FileInputStream("nhanVien.txt");
+            ObjectInputStream ois = new ObjectInputStream(fileInputStream);
+            list = (ArrayList<NhanVien>) ois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
 
     public static NhanVien create(String typeNV) {
         System.out.println("Nhap name");
-        String name = scanner.next();
+        String name = scanner.nextLine();
         System.out.println("Nhap age");
         int age;
         while (true) {
             try {
-                age =Integer.parseInt( scanner.next());
+                age = Integer.parseInt(scanner.nextLine());
                 if (age > 18) {
                     break;
                 } else {
@@ -30,7 +58,7 @@ public class Manager {
         String gender;
         while (true) {
             try {
-                gender = scanner.next();
+                gender = scanner.nextLine();
                 if (gender.equals("nam") || gender.equals("nu")) {
                     break;
                 } else {
@@ -43,20 +71,19 @@ public class Manager {
 
         }
         System.out.println("Nhap phone");
-        String phone = scanner.next();
+        String phone = scanner.nextLine();
         System.out.println("Nhap email");
-        String email ;
-        while (true){
+        String email;
+        while (true) {
             try {
-                email=scanner.next();
-                boolean check=true;
-                for (int i=0;i<list.size();i++){
-                    if(list.get(i).getEmail().equals(email)){check=false;
-                        throw new Exception();
+                email = scanner.nextLine();
+                for (NhanVien nhanVien : list) {
+                    if (nhanVien.getEmail().equals(email)) {
+                        throw new DaCoEmail();
                     }
                 }
-                if(check){break;}
-            }catch (Exception E){
+                break;
+            } catch (Exception E) {
                 System.out.println("Bi trung .Nhap Lai");
             }
         }
@@ -64,7 +91,7 @@ public class Manager {
         float luong;
         while (true) {
             try {
-                luong =  Float.parseFloat(scanner.next());
+                luong = Float.parseFloat(scanner.next());
                 break;
             } catch (Exception E) {
                 System.out.println("Nhap lai");
@@ -88,32 +115,37 @@ public class Manager {
 
     }
 
-    public static void add() {
+
+    public static void add() throws IOException {
         System.out.println("1.Them NV Dao Tao");
         System.out.println("2.Them NV tuyen sinh");
-        int choose = scanner.nextInt();
+        int choose = Integer.parseInt(scanner.nextLine());
         switch (choose) {
             case 1:
                 System.out.println("1.Them NV FullTime");
                 System.out.println("2.Them NV Parttime");
-                int chooseNVFullPart = scanner.nextInt();
+                int chooseNVFullPart = Integer.parseInt(scanner.nextLine());
                 switch (chooseNVFullPart) {
                     case 1:
                         list.add(create("FullTime"));
+                        save();
                         break;
                     case 2:
                         list.add(create("PartTime"));
+                        save();
                         break;
 
                 }
                 break;
             case 2:
                 list.add(create("NVTuyenSinh"));
+                save();
                 break;
         }
     }
 
-    public static void remove() {
+    public static void remove() throws IOException, ClassNotFoundException {
+
         System.out.println("1.Nhan vien Dao tao");
         System.out.println("2.Nhan vien Tuyen Sinh");
         int choose = scanner.nextInt();
@@ -129,6 +161,7 @@ public class Manager {
                         }
                     }
                 }
+                save();
                 break;
             case 2:
                 System.out.println("Nhap ten");
@@ -141,6 +174,7 @@ public class Manager {
                         }
                     }
                 }
+                save();
                 break;
 
         }
@@ -179,9 +213,10 @@ public class Manager {
 
     }
 
-    public static void Sort() {
+    public static void Sort() throws IOException {
         SortByName sortByName = new SortByName();
         list.sort(sortByName);
+        save();
     }
 
     public static void show() {
